@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nobel Prize in Physiology or Medicine: key papers</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&display=swap">
+<style>
+:root{--bg:#f2f6f4;--ink:#18282d;--mute:#5a6b70;--line:#c9d6d2;--acc:#0e6657;--gold:#a87a1f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101c1f;--ink:#e6efec;--mute:#93a6a8;--line:#2a3c3f;--acc:#5cc3ae;--gold:#e0b24d}}
+:root[data-theme="dark"]{--bg:#101c1f;--ink:#e6efec;--mute:#93a6a8;--line:#2a3c3f;--acc:#5cc3ae;--gold:#e0b24d}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Newsreader",Georgia,serif}
+main{max-width:900px;margin:0 auto;padding:32px 20px 64px}
+h1{font-size:clamp(2rem,6vw,3.2rem);line-height:1.05;margin:0 0 10px;font-weight:600}
+.lead{color:var(--mute);max-width:60ch;margin:0 0 22px}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px;font:15px "IBM Plex Sans",system-ui,sans-serif}
+input,select{background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:9px 12px;font:inherit}
+input{flex:1;min-width:200px}
+input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.row{display:grid;grid-template-columns:96px 1fr;gap:6px 20px;padding:22px 0;border-top:1px solid var(--line)}
+.yr{font-size:2rem;font-weight:600;color:var(--gold);line-height:1}
+h2{font-size:1.2rem;margin:0 0 2px;font-weight:600}
+.who a{color:var(--acc)}
+.nb{margin:2px 0 10px}
+dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font:14.5px/1.45 "IBM Plex Sans",system-ui,sans-serif}
+dt{color:var(--mute)}dd{margin:0;overflow-wrap:anywhere}
+dd a{color:var(--acc)}
+.none{color:var(--mute);padding:30px 0}
+footer{color:var(--mute);font:13.5px/1.5 "IBM Plex Sans",system-ui,sans-serif;border-top:1px solid var(--line);padding-top:16px}
+@media(max-width:560px){.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<h1>Nobel Prize in Physiology or Medicine</h1>
+<p class="lead">Selected prizes with the landmark paper behind each, its DOI, the laureates on Wikipedia, and how the discovery was made.</p>
+<div class="tools">
+<input id="q" type="search" placeholder="Search name, topic or method" aria-label="Search">
+<select id="d" aria-label="Decade"><option value="">All decades</option></select>
+</div>
+<div id="list"></div>
+<footer>Each paper is a key publication behind the prize, not necessarily the only one cited by the Nobel Committee. DOIs were entered from memory: if a link fails, use the Nobel link. Early papers (before the DOI era) have none. Not every year is listed yet.</footer>
+</main>
+<script>
+// [year, laureates, why, paper, doi, method]
+const D=[
+[2025,"Mary E. Brunkow|Fred Ramsdell|Shimon Sakaguchi","Peripheral immune tolerance: regulatory T cells and the FOXP3 gene","Brunkow et al., Disruption of a new forkhead/winged-helix protein, scurfin, results in the fatal lymphoproliferative disorder of the scurfy mouse (Nat Genet, 2001)","10.1038/83784","Positional cloning of the mutated gene in scurfy mice, which die of runaway autoimmunity."],
+[2024,"Victor Ambros|Gary Ruvkun","Discovery of microRNA and its role in gene regulation","Lee, Feinbaum & Ambros, The C. elegans heterochronic gene lin-4 encodes small RNAs with antisense complementarity to lin-14 (Cell, 1993)","10.1016/0092-8674(93)90529-Y","Genetic mapping in roundworm mutants, then showing a tiny RNA binds the lin-14 messenger RNA."],
+[2023,"Katalin Karikó|Drew Weissman","Nucleoside base modifications that enabled effective mRNA vaccines","Karikó et al., Suppression of RNA recognition by Toll-like receptors (Immunity, 2005)","10.1016/j.immuni.2005.06.008","Testing modified RNA nucleosides on immune cells and showing they avoid inflammatory sensing."],
+[2022,"Svante Pääbo","Genomes of extinct hominins and human evolution","Green et al., A draft sequence of the Neandertal genome (Science, 2010)","10.1126/science.1188021","Extracting and sequencing heavily degraded ancient DNA from bone, controlling for contamination."],
+[2021,"David Julius|Ardem Patapoutian","Receptors for temperature and touch","Caterina et al., The capsaicin receptor: a heat-activated ion channel in the pain pathway (Nature, 1997)","10.1038/39807","Screening a gene library in cells and picking those that responded to capsaicin."],
+[2020,"Harvey J. Alter|Michael Houghton|Charles M. Rice","Discovery of the hepatitis C virus","Choo et al., Isolation of a cDNA clone derived from a blood-borne non-A, non-B viral hepatitis genome (Science, 1989)","10.1126/science.2523562","Cloning viral genetic material from infected chimpanzee blood without seeing the virus."],
+[2019,"William Kaelin Jr.|Peter J. Ratcliffe|Gregg L. Semenza","How cells sense and adapt to oxygen","Maxwell et al., The tumour suppressor protein VHL targets hypoxia-inducible factors for oxygen-dependent proteolysis (Nature, 1999)","10.1038/20459","Biochemistry in kidney cancer cells showing VHL tags HIF for destruction when oxygen is present."],
+[2018,"James P. Allison|Tasuku Honjo","Cancer therapy by inhibiting negative immune regulation","Leach, Krummel & Allison, Enhancement of antitumor immunity by CTLA-4 blockade (Science, 1996)","10.1126/science.271.5256.1734","Treating tumour-bearing mice with an antibody that releases the brake on T cells."],
+[2017,"Jeffrey C. Hall|Michael Rosbash|Michael W. Young","Molecular mechanisms controlling the circadian rhythm","Hardin, Hall & Rosbash, Feedback of the Drosophila period gene product on circadian cycling of its messenger RNA levels (Nature, 1990)","10.1038/343536a0","Measuring period mRNA across the day in fruit flies to reveal a feedback loop."],
+[2016,"Yoshinori Ohsumi","Mechanisms of autophagy","Takeshige et al., Autophagy in yeast demonstrated with proteinase-deficient mutants (J Cell Biol, 1992)","10.1083/jcb.119.2.301","Starving yeast that cannot digest and watching the cell's recycling vesicles pile up under a microscope."],
+[2014,"John O'Keefe|May-Britt Moser|Edvard I. Moser","The brain's positioning system","Hafting et al., Microstructure of a spatial map in the entorhinal cortex (Nature, 2005)","10.1038/nature03721","Recording single neurons in freely moving rats and finding grid-like firing patterns."],
+[2012,"John Gurdon|Shinya Yamanaka","Reprogramming mature cells to pluripotency","Takahashi & Yamanaka, Induction of pluripotent stem cells from mouse embryonic and adult fibroblast cultures by defined factors (Cell, 2006)","10.1016/j.cell.2006.07.024","Delivering a set of four genes into skin cells to turn them into stem-like cells."],
+[2011,"Bruce Beutler|Jules Hoffmann|Ralph Steinman","Activation of innate immunity and dendritic cells","Poltorak et al., Defective LPS signaling in C3H/HeJ and C57BL/10ScCr mice: mutations in Tlr4 gene (Science, 1998)","10.1126/science.282.5396.2085","Positional cloning of the gene mutated in mice that resist bacterial endotoxin."],
+[2010,"Robert G. Edwards","Development of in vitro fertilisation","Steptoe & Edwards, Birth after the reimplantation of a human embryo (Lancet, 1978)","10.1016/S0140-6736(78)92957-4","Fertilising eggs in the lab and transferring the early embryo into the uterus."],
+[2009,"Elizabeth Blackburn|Carol W. Greider|Jack W. Szostak","How chromosomes are protected by telomeres and telomerase","Greider & Blackburn, Identification of a specific telomere terminal transferase activity in Tetrahymena extracts (Cell, 1985)","10.1016/0092-8674(85)90170-9","A test-tube assay showing a cell extract adds repeats onto telomere DNA."],
+[2008,"Harald zur Hausen|Françoise Barré-Sinoussi|Luc Montagnier","HPV causing cervical cancer; discovery of HIV","Barré-Sinoussi et al., Isolation of a T-lymphotropic retrovirus from a patient at risk for AIDS (Science, 1983)","10.1126/science.6189183","Culturing lymph node cells and detecting reverse transcriptase to find a new retrovirus."],
+[2007,"Mario Capecchi|Martin Evans|Oliver Smithies","Gene modification in mice using embryonic stem cells","Evans & Kaufman, Establishment in culture of pluripotential cells from mouse embryos (Nature, 1981)","10.1038/292154a0","Growing embryonic stem cells from mouse blastocysts, later used for targeted gene changes."],
+[2006,"Andrew Z. Fire|Craig C. Mello","RNA interference by double-stranded RNA","Fire et al., Potent and specific genetic interference by double-stranded RNA in Caenorhabditis elegans (Nature, 1998)","10.1038/35888","Injecting sense, antisense and double-stranded RNA into worms and comparing gene silencing."],
+[2005,"Barry J. Marshall|J. Robin Warren","Helicobacter pylori in gastritis and peptic ulcer","Marshall & Warren, Unidentified curved bacilli in the stomach of patients with gastritis and peptic ulceration (Lancet, 1984)","10.1016/S0140-6736(84)91816-6","Staining stomach biopsies and culturing the bacterium; Marshall also drank a culture himself."],
+[2004,"Richard Axel|Linda B. Buck","Odorant receptors and the olfactory system","Buck & Axel, A novel multigene family may encode odorant receptors (Cell, 1991)","10.1016/0092-8674(91)90418-X","PCR with degenerate primers on smell-neuron RNA to find a large receptor gene family."],
+[2003,"Paul C. Lauterbur|Peter Mansfield","Magnetic resonance imaging","Lauterbur, Image formation by induced local interactions (Nature, 1973)","10.1038/242190a0","Adding magnetic field gradients so signals from different positions can be mapped into an image."],
+[1998,"Robert F. Furchgott|Louis J. Ignarro|Ferid Murad","Nitric oxide as a signalling molecule in the cardiovascular system","Furchgott & Zawadzki, The obligatory role of endothelial cells in the relaxation of arterial smooth muscle by acetylcholine (Nature, 1980)","10.1038/288373a0","Comparing rabbit aorta strips with and without the vessel's inner lining."],
+[1997,"Stanley B. Prusiner","Prions: a new biological principle of infection","Prusiner, Novel proteinaceous infectious particles cause scrapie (Science, 1982)","10.1126/science.6801762","Purifying infectious scrapie material and showing that protein, not nucleic acid, carries it."],
+[1995,"Edward B. Lewis|Christiane Nüsslein-Volhard|Eric F. Wieschaus","Genetic control of early embryonic development","Nüsslein-Volhard & Wieschaus, Mutations affecting segment number and polarity in Drosophila (Nature, 1980)","10.1038/287795a0","A large mutant screen in fruit flies, scoring larvae for body-plan defects."],
+[1989,"J. Michael Bishop|Harold E. Varmus","Cellular origin of retroviral oncogenes","Stehelin et al., DNA related to the transforming gene(s) of avian sarcoma viruses is present in normal avian DNA (Nature, 1976)","10.1038/260170a0","Hybridising a viral cancer-gene probe to healthy bird DNA and finding a match."],
+[1987,"Susumu Tonegawa","Genetic principle for antibody diversity","Tonegawa, Somatic generation of antibody diversity (Nature, 1983)","10.1038/302575a0","Comparing antibody-gene DNA from embryonic and mature cells to show gene segments rearrange."],
+[1984,"Niels K. Jerne|Georges Köhler|César Milstein","Immune regulation and monoclonal antibodies","Köhler & Milstein, Continuous cultures of fused cells secreting antibody of predefined specificity (Nature, 1975)","10.1038/256495a0","Fusing antibody-making B cells with myeloma cells to create immortal hybridomas."],
+[1962,"Francis Crick|James Watson|Maurice Wilkins","Molecular structure of nucleic acids","Watson & Crick, Molecular structure of nucleic acids: a structure for deoxyribose nucleic acid (Nature, 1953)","10.1038/171737a0","Building physical models that fit X-ray diffraction data of DNA fibres."],
+[1945,"Alexander Fleming|Ernst Boris Chain|Howard Florey","Discovery of penicillin and its curative effect","Chain et al., Penicillin as a chemotherapeutic agent (Lancet, 1940)","10.1016/S0140-6736(01)08728-1","Purifying penicillin from mould and testing it in infected mice."],
+[1902,"Ronald Ross","How malaria is transmitted","Ross, On some peculiar pigmented cells found in two mosquitos fed on malarial blood (BMJ, 1897)","10.1136/bmj.2.1929.1786","Dissecting mosquitoes fed on infected blood and finding parasites in the gut wall."],
+[1901,"Emil von Behring","Serum therapy against diphtheria","von Behring & Kitasato, Über das Zustandekommen der Diphtherie-Immunität und der Tetanus-Immunität bei Thieren (Dtsch Med Wochenschr, 1890)","","Injecting blood serum from immunised animals to protect or cure others."]
+];
+const wiki=n=>"https://en.wikipedia.org/wiki/"+encodeURIComponent(n.replace(/ /g,"_"));
+const list=document.getElementById("list"),q=document.getElementById("q"),sel=document.getElementById("d");
+[...new Set(D.map(r=>Math.floor(r[0]/10)*10))].forEach(x=>sel.add(new Option(x+"s",x)));
+function draw(){
+  const t=q.value.toLowerCase(),dec=sel.value;
+  const rows=D.filter(r=>(!dec||Math.floor(r[0]/10)*10==dec)&&(!t||r.join(" ").toLowerCase().includes(t)));
+  list.innerHTML=rows.map(r=>{
+    const who=r[1].split("|").map(n=>`<a href="${wiki(n)}" target="_blank" rel="noopener">${n}</a>`).join(", ");
+    const doi=r[4]?`<a href="https://doi.org/${r[4]}" target="_blank" rel="noopener">${r[4]}</a>`:"No DOI (pre-DOI paper)";
+    return `<article class="row"><div class="yr">${r[0]}</div><div><h2 class="who">${who}</h2><p class="nb">${r[2]}</p>
+<dl><dt>Paper</dt><dd>${r[3]}</dd><dt>DOI</dt><dd>${doi}</dd><dt>URL</dt><dd>${r[4]?`<a href="https://doi.org/${r[4]}" target="_blank" rel="noopener">https://doi.org/${r[4]}</a>`:"—"}</dd>
+<dt>Method</dt><dd>${r[5]}</dd><dt>Nobel</dt><dd><a href="https://www.nobelprize.org/prizes/medicine/${r[0]}/summary/" target="_blank" rel="noopener">nobelprize.org, ${r[0]}</a></dd></dl></div></article>`}).join("")||'<p class="none">No prizes match. Clear the search or pick another decade.</p>';
+}
+q.oninput=sel.onchange=draw;draw();
+</script>
+</body>
+</html>
